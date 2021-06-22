@@ -16,7 +16,7 @@ const std2: Student = {
     age:26,
     location:"tunisia",
 };
-let tab: Array<Student> = [std1, std2];
+var tab: Array<Student> = [std1, std2];
 
 const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
   const table: HTMLTableElement = document.createElement('table');
