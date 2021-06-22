@@ -1,4 +1,3 @@
-// interface
 interface Student {
     firstName: string;
     lastName: string;
@@ -6,7 +5,6 @@ interface Student {
     location: string;
   }
 
-// to create an object
   const student1: Student = {
     firstName: "iheb",
     lastName: "mejri",
@@ -21,10 +19,7 @@ interface Student {
     location: "tunisia",
   };
 
-  // create a list
   const studentsList: Array<Student> = [student1, student2];
-
-  // Using Vanilla Javascript
 
   const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
   const table: HTMLTableElement = document.createElement('table');
