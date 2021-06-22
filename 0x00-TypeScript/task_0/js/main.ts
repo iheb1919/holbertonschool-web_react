@@ -1,24 +1,32 @@
+// interface
 interface Student {
     firstName: string;
     lastName: string;
     age: number;
     location: string;
-}
-const std1: Student = {
-    firstName:"iheb",
-    lastName: "mejri",
-    age:26,
-    location:"tunisia",
-};
-const std2: Student = {
-    firstName:"iheb",
-    lastName: "mejri",
-    age:26,
-    location:"tunisia",
-};
-var tab: Array<Student> = [std1, std2];
+  }
 
-const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
+// to create an object
+  const student1: Student = {
+    firstName: "iheb",
+    lastName: "mejri",
+    age: 26,
+    location: "tunisia",
+  };
+
+  const student2: Student = {
+    firstName: "iheb",
+    lastName: "mejri",
+    age: 27,
+    location: "tunisia",
+  };
+
+  // create a list
+  const studentsList: Array<Student> = [student1, student2];
+
+  // Using Vanilla Javascript
+
+  const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
   const table: HTMLTableElement = document.createElement('table');
   const thead: HTMLTableSectionElement = document.createElement('thead');
   const tbody: HTMLTableSectionElement = document.createElement('tbody');
@@ -36,7 +44,7 @@ const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
   tr.append(th1);
   tr.append(th2);
 
-  tab.forEach(element => {
+studentsList.forEach(element => {
   const trTb: HTMLTableRowElement = document.createElement('tr');
   tbody.append(trTb);
 
@@ -48,4 +56,3 @@ const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
   td.innerHTML = element.location;
   trTb.append(td);
 });
-
