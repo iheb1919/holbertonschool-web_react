@@ -1,0 +1,4 @@
+body p:last-child {
+    font-weight: bold;
+    color: rgb(4, 243, 231);
+  }
