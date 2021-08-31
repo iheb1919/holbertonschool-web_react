@@ -1,4 +1,4 @@
-import {fromjs, getIn} from 'immutable'
+import {fromJS , getIn} from 'immutable'
 export default function accessImmutableObject(object, array) {
-    return (getIn(fromjs(object),array,undefined))
+    return (getIn(fromJS (object), array, undefined))
 }
