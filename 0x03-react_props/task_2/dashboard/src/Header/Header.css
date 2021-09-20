@@ -1,0 +1,16 @@
+.App-header {
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
+    color: rgb(228, 53, 53);
+    /* justify-content: center; */
+    border-bottom: solid rgb(228, 53, 53);
+  }
+  .App-header h1 {
+    align-self: center;
+    margin-left: 30%;
+  }
+  .imgholb {
+    height: 190px;
+    width: 190px;
+  }

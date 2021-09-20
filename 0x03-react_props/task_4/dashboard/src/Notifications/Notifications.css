@@ -1,0 +1,32 @@
+.a{
+    position: relative;
+}
+.Notifications{
+    border: rgb(228, 53, 53) dashed;
+    padding: 10px;
+    position: absolute;
+    right: 20px;
+    top: 30px;
+}
+img {
+    height: 30px;
+}
+button.img{
+  position: absolute;
+  top: 30px;
+  right: 16px;
+  font-size: 18px;
+
+}
+.menuItem{
+    position: absolute;
+    right: 16px;
+    top: 5px;
+}
+li[data-priority-type="default"] {
+	color: blue;
+}
+
+li[data-priority-type="urgent"] {
+	color: red;
+}
