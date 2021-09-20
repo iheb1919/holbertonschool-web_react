@@ -1,0 +1,23 @@
+.NotificationContainer {
+    width: fit-content;
+    position: absolute;
+    right: 10px;
+}
+
+.menuItem {
+    width: fit-content;
+    margin-left: auto;
+}
+
+.Notifications {
+    padding: 1rem;
+    border: 2px dotted #e0354b;
+}
+
+li[data-priority="default"] {
+	color: blue;
+}
+
+li[data-priority="urgent"] {
+	color: red;
+}
