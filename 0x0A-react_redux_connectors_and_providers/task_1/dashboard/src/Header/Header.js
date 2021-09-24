@@ -1,70 +1,49 @@
-import React, { Component } from 'react';
-
-import logo from '../assets/logo.jpg';
-import PropTypes from 'prop-types';
-import AppContext from '../App/AppContext';
+import React from 'react';
+import logo from '../assets/holbertonlogo.jpg';
 import { StyleSheet, css } from 'aphrodite';
-const styles= StyleSheet.create ({
-    header:{
-        order:'-1',
-        paddingTop:"50px",
-        height:'200px',
-        ":nth-child(1n) > img":{
-          width: "200px",
-          height: "200px",
-        
-          '@media (max-width: 900px)':{
-            width: "100px",
-            height: "100px",
-          }
-        },
-        ":nth-child(2n)>h1":{
-          width:""
-        },
-        display: "flex",
-        alignItems: "center",
-        color: "#e0354b",
-        fontBize: "1.5rem",
-        fontWeight: "bold",
-        height: "25%",
-        
-      }
-})
+import AppContext from '../App/AppContext'
 
- class Header extends Component {
-    constructor(props){
-        super(props)
-    }
-    static contextType = AppContext;
-    render()
-    {
-        const { user, logOut } = this.context;
-        return (
-        <div className={css(styles.header)}>
-            <img  src={logo} alt="logo" />
-            <h1>School dashboard</h1>
-            {
-					user.isLoggedIn &&
-					<section id="logoutSection">
-						
-						<p>Welcome <b>{user.email}</b> <a href="#" onClick={() => logOut()}>(logout)</a></p>
-					</section>
-				}
-        </div>
-    )
-    }
+class Header extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className={css(style.appHeader)}>
+        <img src={logo} className={css(style.appLogo)} alt='logo' />
+        <h1 className={css(style.appHeaderH1)}>School dashboard</h1>
+
+        { this.context.user.isLoggedIn ?
+          <p id="logoutSection" className={css(style.logOut)}>Welcome {this.context.user.email} (<span onClick={this.context.logOut}>logout</span>)</p>
+          :
+          <></>
+        }
+      </div>
+    );
+  }
 }
-Header.propTypes = {
-	user: PropTypes.object,
-	logOut: PropTypes.func
-};
 
-Header.defaultProps = {
-	user: {
-		email: '',
-		password: '',
-		isLoggedIn: false,
-	},
-	logOut: () => this.logOut(),
-};
-export default Header
+Header.contextType = AppContext;
+
+const style = StyleSheet.create({
+  appHeader: {
+    backgroundColor: '#fff',
+    borderBottom: '3px solid #e1354b',
+  },
+  appLogo: {
+    width: '200px',
+    height: '200px',
+  },
+  appHeaderH1: {
+    display: 'inline',
+    position: 'relative',
+    top: '-6rem',
+    color: '#e1354b',
+  },
+  logOut: {
+    textAlign: 'end'
+  }
+});
+
+export default Header;

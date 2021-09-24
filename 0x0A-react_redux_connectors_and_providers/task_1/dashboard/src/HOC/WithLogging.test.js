@@ -3,10 +3,17 @@ import { shallow, mount } from 'enzyme';
 import { expect as expectChai } from 'chai';
 import WithLogging from './WithLogging';
 import Login from '../Login/Login';
-import 'jsdom-global/register'
-import { StyleSheetTestUtils } from 'aphrodite';
-StyleSheetTestUtils.suppressStyleInjection();
+import { StyleSheetTestUtils } from "aphrodite";
+
 describe('Test WithLogging.js', () => {
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
+  
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
+
   it('console.log was called on mount and on unmount with Component when the wrapped element is pure html', (done) => {
     const WrapElement = WithLogging(() => <a></a>);
     console.log = jest.fn();

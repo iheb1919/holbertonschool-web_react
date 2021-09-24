@@ -1,87 +1,63 @@
-import 'jsdom-global/register';
 import React from 'react';
-import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import { expect as expectChai } from 'chai';
+import App from '../App/App';
 import Header from './Header';
-import { StyleSheetTestUtils } from 'aphrodite';
-import AppContext from '../App/AppContext';
-StyleSheetTestUtils.suppressStyleInjection();
-describe("Testing the <Header /> Component", () => {
-	
-	let wrapper;
+import { StyleSheetTestUtils } from "aphrodite";
+import AppContext, { user, logOut } from "../App/AppContext";
 
-	wrapper = mount(
-		<Header shouldRender />,
-		{ context: AppContext }
-	);
+describe('Test Header.js', () => {
+  const value = { user: user, logOut: logOut};
 
-	
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
 
-	
-	it("<Header /> is rendered without crashing", () => {
-		expect(wrapper).to.not.be.an('undefined');
-    });
-    
-    it("the <Header /> component render img", () => {
-		expect(wrapper.find('img')).to.have.lengthOf(1);
-    });
-    
-    it("the <Header /> component render h1", () => {
-		expect(wrapper.find('h1')).to.have.lengthOf(1);
-	});
-	it("Verify that the logoutSection is not created", () => {
-		let context = {
-			user: {
-				email: '',
-				password: '',
-				isLoggedIn: false,
-			},
-			logOut: () => {},
-		};
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
 
-		let wrapper = mount(
-			<Header />,
-			{ context: context }
-		);
-		
-		expect(wrapper.find("#logoutSection").at(0)).to.have.lengthOf(0);
-	});
-	it("Verify that the logoutSection is created", () => {
-		let context = {
-			user: {
-				email: 'a@aa',
-				password: 'aaa',
-				isLoggedIn: true,
-			},
-			logOut: () => {},
-		};
+  it('Header without crashing', (done) => {
+    expectChai(shallow(<AppContext.Provider value={value}><Header/></AppContext.Provider>).exists());
+    done();
+  });
 
-		let wrapper = mount(
-			<Header />,
-			{ context: context }
-		);
-		
-		expect(wrapper.find("#logoutSection").at(0)).to.not.be.false;
-	});
+  /*it('div with the class App-header', (done) => {
+    const wrapper = shallow(<App />);
+    expectChai(wrapper.contains(<header className='App-header' />))
+    done()
+  });*/
 
-	it("click the logout ", () => {		
-		let context = {
-			user: {
-				email: 'a@aa',
-				password: 'aaa',
-				isLoggedIn: true,
-			},
-			logOut: () => {},
-		};
+  it('renders 1 img and 1 h1', (done) => {
+    const wrapper = mount(<AppContext.Provider value={value}><Header/></AppContext.Provider>);
+    expectChai(wrapper.find('img')).to.have.lengthOf(1);
+    expectChai(wrapper.find('h1')).to.have.lengthOf(1);
+    done();
+  });
 
-		let wrapper = mount(
-			<Header />,
-			{ context: context }
-		);
-			
-		let spy = jest.spyOn(wrapper.instance().context, "logOut");
+  it('test that mounts the Header component with a default context value. Verify that the logoutSection is not created', (done) => {
+    const wrapper = mount(<AppContext.Provider value={value}><Header/></AppContext.Provider>);
+    expectChai(wrapper.find('p#logoutSection')).to.have.lengthOf(0);
+    done();
+  });
 
-		
-	});
+  it('test that mounts the Header component with a user defined (isLoggedIn is true and an email is set). Verify that the logoutSection is created', (done) => {
+    value.user.isLoggedIn = true;
+    value.user.email = 'test@test.com';
+    value.user.password = 'test';
+    const wrapper = mount(<AppContext.Provider value={value}><Header/></AppContext.Provider>);
+    expectChai(wrapper.find('p#logoutSection')).to.have.lengthOf(1);
+    done();
+  });
 
+  it('test that mounts the Header component with a user defined (isLoggedIn is true and an email is set) and the logOut is linked to a spy. Verify that clicking on the link is calling the spy', (done) => {
+    value.user.isLoggedIn = true;
+    value.user.email = 'test@test.com';
+    value.user.password = 'test';
+    value.logOut = jest.fn();
+    const wrapper = mount(<AppContext.Provider value={value}><Header/></AppContext.Provider>);
+    wrapper.find("#logoutSection span").simulate("click");
+    expect(value.logOut).toHaveBeenCalled();
+    done();
+  });
 });

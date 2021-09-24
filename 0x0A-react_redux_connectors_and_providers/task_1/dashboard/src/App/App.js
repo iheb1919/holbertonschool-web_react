@@ -1,74 +1,58 @@
 import React from 'react';
+import PropTypes from 'prop-types'; // ES6
+import { StyleSheet, css } from 'aphrodite';
 import { connect } from 'react-redux';
-import Footer from '../Footer/Footer';
+
+import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Login from '../Login/Login';
-import Notifications from '../Notifications/Notifications';
-import PropTypes from 'prop-types';
 import CourseList from '../CourseList/CourseList';
+import Footer from '../Footer/Footer';
+import { getLatestNotification } from '../utils/utils';
 import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
 import BodySection from '../BodySection/BodySection';
-import { getLatestNotification } from '../utils/utils';
-import { StyleSheet, css} from 'aphrodite';
-import AppContext from './AppContext';
 import { user, logOut } from './AppContext';
+import AppContext from './AppContext';
 import { displayNotificationDrawer, hideNotificationDrawer } from '../actions/uiActionCreators';
 
-const styles = StyleSheet.create({
-  App: {
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    
-  },
-  
-  courselist:{
-    width: '80%',
-    margin: '0 auto',
-    marginTop: '20px',
-    border: '2px solid rgba(0, 0, 0, 0.2)',
-  },
-  
-  div:{
-    
-    borderBottom: "3px solid #e0354b",
-    display:'flex',
-    flexDirection:'row',
-    clear: 'both',
-    '@media(max-width: 600px)':{
-      display: 'flex',
-      alignItems: "center",
-      flexDirection: 'column',
-    }
-  },
-  NotificationContainer:{
 
-  }
-
-})
 const listCourses = [
-  {id: 1, name: "ES6", credit: 60},
-  {id: 2, name: "Webpack", credit: 20},
-  {id: 3, name: "React", credit: 40}
-]
+  { id: 1, name: 'ES6', credit: 60 },
+  { id: 2, name: 'Webpack', credit: 20 },
+  { id: 3, name: 'React', credit: 40 }
+];
 
 const listNotifications = [
-  {id: 1, type: "default", value: "New course available"},
-  {id: 2, type: "urgent", value: "New resume available"},
-  {id: 3, type: "urgent", __html: {__html: getLatestNotification()}},
-]
+  { id: 1, type: 'default', value: 'New course available' },
+  { id: 2, type: 'urgent', value: 'New resume available' },
+  { id: 3, type: 'urgent', html: { __html: getLatestNotification()} }
+];
+
 class App extends React.Component {
   constructor(props) {
-    super(props)
-    this.state = {
-      user:user,
-      logOut: () => this.logOut(),
-      listNotifications: listNotifications
-    }
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
     this.logOut = this.logOut.bind(this);
     this.logIn = this.logIn.bind(this);
     this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
+    this.state = {
+      user: user,
+      logOut: this.logOut,
+      listNotifications: listNotifications
+    };
   }
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleClick);
+  }
+
+  handleClick(event) {
+    if (event.keyCode === 72 && event.ctrlKey) {
+      alert('Logging you out');
+      this.state.logOut();
+    }
+  }
+
   logIn(email, password) {
     this.setState({ user: { email: email, password: password, isLoggedIn: true } })
   }
@@ -76,85 +60,40 @@ class App extends React.Component {
   logOut() {
     this.setState({ user: user });
   }
- /*  handleDisplayDrawer() {
-    this.setState({
-      displayDrawer: true
-    });
-  };
-  handleHideDrawer() {
-    this.setState({
-      displayDrawer: false
-    });
-  }; */
 
-  handleKeyDown(e) {
-    if (e.ctrlKey && e.code == "KeyH") {
-      //e.preventDefault()
-      alert("Logging you out");
-      this.logOut();
-      
-    }
+  markNotificationAsRead(id) {
+    this.setState({ listNotifications: this.state.listNotifications.filter(notification => { return notification.id !== id }) });
   }
 
-  componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-  }
-  markNotificationAsRead(id){
-    const updatedNotifications = this.state.listNotifications.filter((notif) => {
-      return notif.id !== id;
-    });
-
-    this.setState({
-      listNotifications: updatedNotifications,
-    });
-  }
   render() {
-    const  {user, logOut, listNotifications } = this.state;
+    const { user, logOut, listNotifications } = this.state;
     const { isLoggedIn, displayDrawer, displayNotificationDrawer, hideNotificationDrawer } = this.props;
+  
     return (
       <AppContext.Provider value={{user: user, logOut: logOut}}>
-      <React.Fragment>
-{/*          <Notifications listNotifications={listNotifications}/>
- */}      <div className={css(styles.App)}>
-          <div className={css(styles.div)}>
-          { this.state.user.isLoggedIn ? (
-          <Notifications className={css(styles.NotificationContainer)}
-          listNotifications={listNotifications} 
-          displayDrawer={displayDrawer}
-          handleDisplayDrawer={displayNotificationDrawer}
-          handleHideDrawer={hideNotificationDrawer}
-          markNotificationAsRead={this.markNotificationAsRead}
-          />
-          ):(
-            <div></div>
-          )}
-          <Header  />
+        <Notifications listNotifications={listNotifications} displayDrawer={displayDrawer} 
+                       handleDisplayDrawer={displayNotificationDrawer} handleHideDrawer={hideNotificationDrawer}
+                       markNotificationAsRead={this.markNotificationAsRead}></Notifications>
+        <div className='App'>
+          <Header></Header>
+          <div className={css(style.appBody)}>
+            {isLoggedIn ? 
+              <BodySectionWithMarginBottom title='Course list'>
+                <CourseList listCourses={listCourses} ></CourseList>
+              </BodySectionWithMarginBottom> : 
+              <BodySectionWithMarginBottom title='Log in to continue'>
+                <Login logIn={this.logIn}></Login>
+              </BodySectionWithMarginBottom>}
+            <BodySection title='News from the School'>
+              <p>Some news</p>
+            </BodySection>
           </div>
-          { this.state.user.isLoggedIn ? (
-            <BodySectionWithMarginBottom title="Course list">
-              <CourseList className={css(styles.courselist)} listCourses={listCourses} />
-            </BodySectionWithMarginBottom>
-          ) : (
-            <BodySectionWithMarginBottom title="Log in to continue">
-              <Login logIn={this.logIn}/>
-            </BodySectionWithMarginBottom>
-          )
-          }
-          <BodySection title="News from the school">
-            <p>
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti 
-            atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident,
-            </p>
-          </BodySection>
-          <Footer />
+          <div className={css(style.appFooter)}>
+            <Footer></Footer>
+          </div>
         </div>
-      </React.Fragment>
       </AppContext.Provider>
-    )
+    );
   }
 }
 
@@ -171,16 +110,35 @@ App.defaultProps = {
   displayNotificationDrawer: () => {},
   hideNotificationDrawer: () => {},
 };
+
+const style = StyleSheet.create({
+  appBody: {
+    backgroundColor: '#fff',
+    padding: '4rem',
+    minHeight: '26rem',
+  },
+  appFooter: {
+    backgroundColor: '#fff',
+    textAlign: 'center',
+    width: '100%',
+    bottom: '0px',
+    borderTop: '3px solid #e1354b',
+    fontStyle: 'italic',
+    padding: '1rem 0'
+  }
+});
+
 export const mapStateToProps = (state) => {
   return {
-    isLoggedIn: state.get('isUserLoggedIn'),
-    displayDrawer: state.get('isNotificationDrawerVisible')
+    isLoggedIn: state.get("isUserLoggedIn"),
+    displayDrawer: state.get("isNotificationDrawerVisible")
   };
 };
+
 const mapDispatchToProps = {
   displayNotificationDrawer,
   hideNotificationDrawer,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
+ 

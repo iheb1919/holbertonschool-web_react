@@ -20,12 +20,15 @@ describe('Test App.js', () => {
     { id: 2, type: 'urgent', value: 'New resume available' },
     { id: 3, type: 'urgent', html: { __html: getLatestNotification()} }
   ];
+
   beforeAll(() => {
     StyleSheetTestUtils.suppressStyleInjection();
   });
+
   afterAll(() => {
     StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
   });
+
   beforeEach(() => {
     events = {}; // Empty our events before each test case
     // Define the addEventListener method with a Jest mock function
@@ -33,15 +36,19 @@ describe('Test App.js', () => {
       events[event] = callback;
     });
   });
+
+
   it('App without crashing', (done) => {
     expectChai(shallow(<App />).exists());
     done();
   });
+
   it('check that CourseList is not displayed when isLoggedIn is false', (done) => {
     const wrapper = shallow(<App />);
     expectChai(wrapper.find(CourseList)).to.have.lengthOf(0);
     done();
   });
+
   it('check that CourseList is displayed and Login is not displayed when isLoggedIn is true', (done) => {
     const wrapper = shallow(<App />);
     wrapper.setState({ user: { isLoggedIn: true } });
@@ -49,6 +56,7 @@ describe('Test App.js', () => {
     expectChai(wrapper.find(Login)).to.have.lengthOf(0);
     done();
   });
+
   it('verify that when the keys "control" and "h" are pressed the "logOut" function is called', (done) => {
     const logSpy = jest.fn();
     const wrapper = mount(<AppContext.Provider value={value}><App/></AppContext.Provider>);
@@ -58,6 +66,7 @@ describe('Test App.js', () => {
     expect(logSpy).toHaveBeenCalled()
     done();
   });
+
   it('verify that the default state for displayDrawer is false. Verify that after calling handleDisplayDrawer, the state should now be true', (done) => {
     const wrapper = mount(<App isLoggedIn={true} />);
     expectChai(wrapper.state().displayDrawer).to.equal(false);
@@ -65,6 +74,7 @@ describe('Test App.js', () => {
     expectChai(wrapper.state().displayDrawer).to.equal(true);
     done();
   });
+
   it('verify that after calling handleHideDrawer, the state is updated to be false', (done) => {
     const wrapper = mount(<App isLoggedIn={true} />);
     expectChai(wrapper.state().displayDrawer).to.equal(false);
@@ -74,12 +84,14 @@ describe('Test App.js', () => {
     expectChai(wrapper.state().displayDrawer).to.equal(false);
     done();
   });
+
   it('Refactor the test checking if logOut is being called by verifying if the state is updated correctly instead', (done) => {
     const wrapper = mount(<AppContext.Provider value={value}><App/></AppContext.Provider>);
     wrapper.instance().logOut;
     expectChai(wrapper.state().user).to.equals(value.user);
     done();
   });
+
   it('test to verify that the logIn function updates the state correctly', (done) => {
     const wrapper = mount(<AppContext.Provider value={value}><App/></AppContext.Provider>);
     wrapper.instance().logIn('test@test.com', 'test');
@@ -91,6 +103,7 @@ describe('Test App.js', () => {
     expectChai(wrapper.state().user.isLoggedIn).to.equals(value.user.isLoggedIn);
     done();
   });
+
   it('test to verify that the logOut function updates the state correctly', (done) => {
     value.user.isLoggedIn = true;
     value.user.email = 'test@test.com';
@@ -100,6 +113,7 @@ describe('Test App.js', () => {
     expectChai(wrapper.state().user).to.equals(user);
     done();
   });
+
   it('verify that markNotificationAsRead works as intended.', (done) => {
     const wrapper = mount(<AppContext.Provider value={value}><App/></AppContext.Provider>);
     wrapper.setState({ listNotifications: listNotifications });
@@ -116,3 +130,4 @@ describe('Test App.js', () => {
     done();
   });
 });
+

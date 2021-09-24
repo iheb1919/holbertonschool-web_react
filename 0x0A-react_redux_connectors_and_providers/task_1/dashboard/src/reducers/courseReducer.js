@@ -1,24 +1,23 @@
-import { SELECT_COURSE, UNSELECT_COURSE, FETCH_COURSE_SUCCESS, } from '../actions/courseActionTypes';
-import Immutable, { setIn } from 'immutable';
-import { coursesNormalizer, } from '../schema/courses'; 
+import { FETCH_COURSE_SUCCESS, SELECT_COURSE, UNSELECT_COURSE } from '../actions/courseActionTypes';
+import { coursesNormalizer } from '../schema/courses';
 
-export let initState = [];
+const { Map } = require('immutable');
 
-export let courseReducer = (state = new Immutable.Map(initState), action) => {
-  let newState = [];
-  switch (action.type) {
+export const courseReducer = (state = Map([]), action) => {
+  switch(action.type) {
     case FETCH_COURSE_SUCCESS:
-      let editedData = [];
-      action.data.map(course => {
-        editedData.push({...course, isSelected: false});
+      const data = coursesNormalizer(action.data);
+      Object.keys(data).map((key) => {
+        data[key].isSelected = false;
       });
-      editedData = coursesNormalizer(editedData);
-      return state.merge(editedData);
+      return state.merge(data);
     case SELECT_COURSE:
-      return setIn(state, ['entities', 'courses', action.index, 'isSelected'], true);
+      return state.setIn([String(action.index), "isSelected"], true);
     case UNSELECT_COURSE:
-      return setIn(state, ['entities', 'courses', action.index, 'isSelected'], false);
+      return state.setIn([String(action.index), "isSelected"], false);
     default:
-      return state;
-  };
+      break;
+  }
+
+  return state;
 };

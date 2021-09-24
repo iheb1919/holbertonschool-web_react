@@ -1,39 +1,48 @@
 import React from 'react';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import { expect } from 'chai';
+import App from '../App/App';
 import Login from './Login';
-import { StyleSheetTestUtils } from 'aphrodite';
-StyleSheetTestUtils.suppressStyleInjection();
-describe("Testing the <Login /> Component", () => {
-	
-	let wrapper;
+import { StyleSheetTestUtils } from "aphrodite";
 
-	beforeEach(() => {
-		wrapper = shallow(<Login shouldRender />);
-	});
+describe('Test Login.js', () => {
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
 
-	it("<Login /> is rendered without crashing", () => {
-		expect(wrapper).to.not.be.an('undefined');
-    });
-    
-    it("the <Login /> component render 2 inputs", () => {
-		expect(wrapper.find('input')).to.have.lengthOf(3);
-    });
-    
-    it("the <Login /> component render 2 labels", () => {
-		
-		expect(wrapper.find('label')).to.have.lengthOf(2);
-	});
-	it('Verify that the submit button is disabled by default', () => {
-		expect(wrapper.instance().state.enableSubmit).to.equal(false);
-	});
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
 
-	it('verify that after changing the value of the two inputs, the button is enabled', () => {
-		const emailInput = wrapper.find('input').at(0);
-		const passwordInput = wrapper.find('input').at(1);
-		emailInput.simulate('change', {target: {value: 'test'}});
-		passwordInput.simulate('change', {target: {value: 'test'}});
-		expect(wrapper.state('enableSubmit')).to.equal(true)
-	});
+  it('Login without crashing', (done) => {
+    expect(shallow(<Login />).exists());
+    done();
+  });
 
+  /*it('div with the class App-body', (done) => {
+    const wrapper = shallow(<App />);
+    expect(wrapper.contains(<body className='App-body' />))
+    done();
+  });*/
+
+  it('renders 2 inputs and 2 labels', (done) => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.find('input')).to.have.lengthOf(3);
+    expect(wrapper.find('label')).to.have.lengthOf(2);
+    done();
+  });
+
+  it('verify that the submit button is disabled by default', (done) => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.state().enableSubmit).to.equal(false);
+    done();
+  });
+
+  it('verify that after changing the value of the two inputs, the button is enabled', (done) => {
+    const wrapper = shallow(<Login />);
+    wrapper.find('input#email').simulate('change', { target: { value: 'test@test.com' } });
+    wrapper.find('input#password').simulate('change', { target: { value: 'test' } });
+    expect(wrapper.state().enableSubmit).to.equal(true);
+    done();
+  });
 });

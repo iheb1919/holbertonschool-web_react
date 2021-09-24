@@ -1,57 +1,49 @@
-import 'jsdom-global/register';
 import React from 'react';
-import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
+import { expect as expectChai } from 'chai';
+import App from '../App/App';
 import Footer from './Footer';
-import { StyleSheetTestUtils } from 'aphrodite';
-import AppContext from '../App/AppContext';
-StyleSheetTestUtils.suppressStyleInjection();
-describe("Testing the <Footer /> Component", () => {
-	
-	let wrapper;
-	
-	beforeEach(() => {
-		wrapper = shallow(<Footer shouldRender />);
-	});
+import { StyleSheetTestUtils } from "aphrodite";
+import AppContext, { user, logOut } from "../App/AppContext";
 
-	it("<Footer /> is rendered without crashing", () => {
-		expect(wrapper).to.not.be.an('undefined');
-    });
-    
-    it("<Footer /> renders at least the text: Copyright", () => {
-		expect(wrapper.children('p').html()).to.include('Copyright');
-	});
-	
-	
-	it("verify that the link is not displayed ", () => {
-		const contextDefault = {
-			user: {
-				email: '',
-				password: '',
-				isLoggedIn: false,
-			},
-			logOut: () => {},
-		};
-		wrapper = mount(<AppContext.Provider value={contextDefault}>
-				<Footer>
-				</Footer>
-				</AppContext.Provider>)
-		//console.log(wrapper.html())
-		expect(wrapper.find(".contact_yg2qaf")).to.have.lengthOf(0);
-	});
+describe('Test Footer.js', () => {
+  const value = { user: user, logOut: logOut};
 
-	it("verify that the link is  displayed ", () => {
-		const context = {
-			user: {
-				email: 'aa@aa',
-				password: 'aaa',
-				isLoggedIn: true,
-			},
-			logOut: () => {},
-		};
-		wrapper = mount(<AppContext.Provider value={context}><Footer></Footer></AppContext.Provider>)
-		//console.log(wrapper.html())
-		expect(wrapper.find("a")).to.have.lengthOf(1);
-	});
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
 
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
+
+  it('Footer without crashing', (done) => {
+    expectChai(shallow(<AppContext.Provider value={value}><Footer /></AppContext.Provider>).exists());
+    done();
+  });
+
+  /*it('div with the class App-footer', (done) => {
+    const wrapper = shallow(<App />);
+    expectChai(wrapper.contains(<footer className='App-footer' />))
+    done();
+  });*/
+
+  it('renders Copyright text', (done) => {
+    const wrapper = shallow(<AppContext.Provider value={value}><Footer /></AppContext.Provider>);
+    expectChai(wrapper.find(Footer).html()).match(/<footer><p>Copyright*/);
+    done();
+  });
+
+  it('test to verify that the link is not displayed when the user is logged out within the context', (done) => {
+    const wrapper = shallow(<AppContext.Provider value={value}><Footer /></AppContext.Provider>);
+    expect(wrapper.find("footer a")).toHaveLength(0);
+    done();
+  });
+
+  it('test to verify that the link is displayed when the user is logged in within the context', (done) => {
+    value.user.isLoggedIn = true;
+    const wrapper = shallow(<AppContext.Provider value={value}><Footer /></AppContext.Provider>);
+    expect(wrapper.find(Footer).html()).toEqual('<footer><p>Copyright 2021 - Holberton School</p><p id="conctacUs"><a>Contact us</a></p></footer>');
+    done();
+  });
 });

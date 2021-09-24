@@ -1,21 +1,12 @@
-import Immutable from "immutable";
-
-const filterTypeSelected = (state) => {
-  return state.toJS().filter;
+export const filterTypeSelected = (state) => {
+  return state.get('filter');
 };
 
-const getNotifications = (state) => {
-  let notifs = state.get('notifications');
-  return new Immutable.Map(notifs);
+export const getNotifications = (state) => {
+  return state.get('notifications');
 };
 
-const getUnreadNotifications = (state) => {
-  let unreadNotifs = Object.values(state.get('notifications')).filter(n => !n.isRead);
-  return new Immutable.Map(unreadNotifs);
-};
-
-module.exports = {
-  filterTypeSelected,
-  getNotifications,
-  getUnreadNotifications,
+export const getUnreadNotifications = (state) => {
+  const notifications = Object.values(getNotifications(state).toJS());
+  return notifications.filter((notification) => notification.isRead);
 };

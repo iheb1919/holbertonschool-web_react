@@ -1,39 +1,21 @@
-import Adapter from 'enzyme-adapter-react-16';
-import { shallow, configure, mount, } from 'enzyme';
-import { StyleSheetTestUtils, } from 'aphrodite';
-import {
-  MARK_AS_READ,
-  SET_TYPE_FILTER,
-  NotificationTypeFilters,
-} from './notificationActionTypes.js';
-import {
-  markAsAread,
-  setNotificationFilter,
-} from './notificationActionCreators.js';
+import { MARK_AS_READ, SET_TYPE_FILTER } from './notificationActionTypes';
+import { markAsAread, setNotificationFilter } from './notificationActionCreators';
+import { expect as expectChai } from 'chai';
 
-configure({ adapter: new Adapter() });
+var _ = require('lodash');
 
-StyleSheetTestUtils.suppressStyleInjection();
-
-describe("Testing the Notification Action Creators.", () => {
-
-  it("Testing the markAsAread action", () => {
-    const expectedResult = {
-      type: MARK_AS_READ,
-      index: 1
-    };
-    let result = markAsAread(1);
-    expect(result).toMatchObject(expectedResult);
+describe('Test notificationActionCreators.js', () => {
+  it('test for markAsAread' , (done) => {
+    const data = markAsAread(1);
+    const result = { type: MARK_AS_READ, index: 1 };    
+    expectChai(_.isEqual(data, result)).to.equal(true);
+    done();
   });
 
-  it("Testing the setNotificationFilter action", () => {
-    const expectedResult = {
-      type: SET_TYPE_FILTER,
-      filter: "DEFAULT"
-    };
-
-    let result = setNotificationFilter(NotificationTypeFilters['DEFAULT']);
-    expect(result).toMatchObject(expectedResult);
+  it('test for setNotificationFilter', (done) => {
+    const data = setNotificationFilter('DEFAULT');
+    const result = { type: SET_TYPE_FILTER, filter: 'DEFAULT' };    
+    expectChai(_.isEqual(data, result)).to.equal(true);
+    done();
   });
-
 });

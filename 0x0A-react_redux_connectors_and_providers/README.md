@@ -1,1 +1,1 @@
-0x0A-react_redux_connectors_and_providers
+0x0A. React Redux Connectors and Providers

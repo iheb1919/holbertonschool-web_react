@@ -1,37 +1,30 @@
-import {
-  MARK_AS_READ,
-  SET_TYPE_FILTER,
-  NotificationTypeFilters,
-  FETCH_NOTIFICATIONS_SUCCESS,
-} from '../actions/notificationActionTypes.js';
-import {
-  markAsAread,
-  setNotificationFilter,
-  fetchNotificationsSuccess
-} from '../actions/notificationActionCreators.js';
-import Immutable, { setIn, merge } from 'immutable';
-import { notificationsNormalizer, } from '../schema/notifications';
+import { FETCH_NOTIFICATIONS_SUCCESS, MARK_AS_READ, SET_TYPE_FILTER } from '../actions/notificationActionTypes';
+import { notificationsNormalizer } from '../schema/notifications';
 
-export const initState = {
-  filter: 'DEFAULT',
+const { Map, setIn } = require('immutable');
+
+export const initialState = {
   notifications: [],
+  filter: "DEFAULT",
 };
 
-export let notificationReducer = (state = new Immutable.Map(initState), action) => {
-  let newState = state;
+export const notificationReducer = (state = Map(initialState), action) => {
   switch(action.type) {
     case FETCH_NOTIFICATIONS_SUCCESS:
-      let notifs = [];
-      action.data.map(course => {
-        notifs.push({...course, isRead: false });
+      const data = notificationsNormalizer(action.data);
+      Object.keys(data.notifications).map((key) => {
+        data.notifications[key].isRead = false;
       });
-      notifs = notificationsNormalizer(notifs);
-      return merge(state, { 'notifications': notifs, });
+      return state.merge(data);
     case MARK_AS_READ:
-      return setIn(state, ['entities', 'notifications', action.index])
+      return setIn(state, ['notifications', String(action.index), 'isRead'], true);
     case SET_TYPE_FILTER:
-      return setIn(state, ['entities', 'filter', action.filter]);
+      return state.set('filter', action.filter);
     default:
-      return state;
-  };
+      break;
+  }
+
+  return state;
 };
+
+export default notificationReducer;

@@ -1,27 +1,33 @@
 import React from 'react';
-import { expect } from 'chai';
-import Adapter from 'enzyme-adapter-react-16';
-import { shallow, configure, mount, } from 'enzyme';
-import BodySectionWithMarginBottom from './BodySectionWithMarginBottom.js';
-import { StyleSheetTestUtils } from 'aphrodite';
-StyleSheetTestUtils.suppressStyleInjection();
+import { shallow } from 'enzyme';
+import { expect as expectChai } from 'chai';
+import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
+import BodySection from './BodySection';
+import { StyleSheetTestUtils } from "aphrodite";
 
-configure({
-	adapter: new Adapter()
-});
+describe('Test BodySectionWithMarginBottom.js', () => {
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
 
-describe("Testing the BodySectionWithMarginBottom", () => {
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
 
-	it("Renders BodySection Component correctly", () => {
-		const props = {
-			title: 'title',
-			children: React.createElement('p', 'test child'),
-		};
+  it('Render without crashing', (done) => {
+    expectChai(shallow(<BodySectionWithMarginBottom title='test title' />).exists());
+    done();
+  });
 
-		const wrapper = shallow(<BodySectionWithMarginBottom {...props} />);
-		
-		
-		expect(wrapper.html()).to.equal('<div class="bodySectionWithMargin"><div class="bodySection"><h2>title</h2><p></p></div></div>');
-	});
-
+  it ('Test if render correctly a BodySection component and that the props are passed correctly to the child component', (done) => {
+    const wrapper = shallow(<BodySectionWithMarginBottom title='test title'><p>test children node</p></BodySectionWithMarginBottom>)
+    expectChai(wrapper.contains(<div className='bodySectionWithMargin' />));
+    expectChai(wrapper.children()).to.have.lengthOf(1);
+    expectChai(wrapper.find(BodySection)).to.have.lengthOf(1);
+    expectChai(wrapper.find(BodySection).children()).to.have.lengthOf(1);
+    expectChai(wrapper.find(BodySection).props().title).to.equal('test title');
+    expectChai(wrapper.find('p')).to.have.lengthOf(1);
+    expectChai(wrapper.find('p').text()).to.equal('test children node');
+    done();
+  })
 });

@@ -1,27 +1,21 @@
-import Adapter from 'enzyme-adapter-react-16';
-import { shallow, configure, mount, } from 'enzyme';
-import { StyleSheetTestUtils, } from 'aphrodite';
-import { SELECT_COURSE, UNSELECT_COURSE, } from './courseActionTypes';
-import { selectCourse, unSelectCourse, } from './courseActionCreators';
+import { selectCourse, unSelectCourse } from './courseActionCreators';
+import { SELECT_COURSE, UNSELECT_COURSE } from './courseActionTypes';
+import { expect as expectChai } from 'chai';
 
-configure({ adapter: new Adapter() });
+var _ = require('lodash');
 
-StyleSheetTestUtils.suppressStyleInjection();
-
-describe("Testing the course Action Creator.", () => {
-
-  it("Testing the selectCourse action", () => {
-    const expectedResult = { type: SELECT_COURSE, index: 1 };
-
-    let result = selectCourse(1);
-    expect(result).toMatchObject(expectedResult);
+describe('Test courseActionCreators.js', () => {
+  it('test for the selectCourse action. Calling the creator with 1 as argument should return: "{ type: SELECT_COURSE, index: 1 }"' , (done) => {
+    const data = selectCourse(1);
+    const result = { type: SELECT_COURSE, index: 1 };
+    expectChai(_.isEqual(data, result)).to.equal(true);
+    done();
   });
 
-  it("Testing the unSelectCourse action", () => {
-    const expectedResult = { type: UNSELECT_COURSE, index: 1 };
-
-    let result = unSelectCourse(1);
-    expect(result).toMatchObject(expectedResult);
+  it('test for the unSelectCourse action. Calling the creator with 1 as argument should return: "{ type: UNSELECT_COURSE, index: 1 }"', (done) => {
+    const data = unSelectCourse(1);
+    const result = { type: UNSELECT_COURSE, index: 1 };
+    expectChai(_.isEqual(data, result)).to.equal(true);
+    done();
   });
-
 });
